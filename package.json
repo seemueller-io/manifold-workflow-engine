@@ -4,9 +4,10 @@
   "description": "for building dynamic, LLM-driven workflows using a region-based execution model",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "geoffsee",
   "license": "MIT"
 }
