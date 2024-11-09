@@ -1,12 +1,12 @@
 {
-  "name": "manifold",
+  "name": "workflow-function-manifold",
   "version": "1.0.0",
-  "description": "",
+  "description": "for building dynamic, LLM-driven workflows using a region-based execution model",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "MIT"
 }

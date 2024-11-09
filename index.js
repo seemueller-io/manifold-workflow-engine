@@ -66,31 +66,44 @@ class WorkflowFunctionManifold {
     }
 
     async navigate(prompt) {
-        const intent = await this.llmService.query(prompt);
+        try {
+            const intent = await this.llmService.query(prompt);
 
-        // Find best region based on intent
-        const nextRegion = Array.from(this.currentRegion.adjacentRegions)
-            .find(region => region.name.toLowerCase().includes(intent.action));
+            // Find the best matching adjacent region
+            const nextRegion = Array.from(this.currentRegion.adjacentRegions)
+                .find(region => region.name.toLowerCase().includes(intent.action));
 
-        if (nextRegion && intent.confidence > 0.5) {
-            this.currentRegion = nextRegion;
-            return true;
+            if (nextRegion && intent.confidence > 0.5) {
+                this.currentRegion = nextRegion;
+                return true;
+            } else {
+                console.warn(`No valid region found for prompt: "${prompt}"`);
+                return false;
+            }
+        } catch (error) {
+            console.error(`Error during navigation for prompt "${prompt}":`, error);
+            return false;
         }
-        return false;
     }
 
     async executeWorkflow(prompt) {
-        const operators = await this.currentRegion.getValidOperators(this.state);
-        const intent = await this.llmService.query(prompt);
+        try {
+            const operators = await this.currentRegion.getValidOperators(this.state);
+            const intent = await this.llmService.query(prompt);
 
-        const matchedOperator = operators
-            .find(op => op.name.toLowerCase().includes(intent.action));
+            const matchedOperator = operators.find(op => op.name.toLowerCase().includes(intent.action));
 
-        if (matchedOperator) {
-            this.state = await matchedOperator.execute(this.state);
-            return true;
+            if (matchedOperator) {
+                this.state = await matchedOperator.execute(this.state);
+                return true;
+            } else {
+                console.warn(`No matching operator found for intent: ${intent.action}`);
+                return false;
+            }
+        } catch (error) {
+            console.error(`Error during workflow execution for prompt "${prompt}":`, error);
+            return false;
         }
-        return false;
     }
 }
 

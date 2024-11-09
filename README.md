@@ -5,6 +5,19 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 ![Node Version](https://img.shields.io/badge/node-%3E%3D%2014.0.0-brightgreen)
 
+## Table of Contents
+- [Overview](#overview)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Core Components](#core-components)
+- [Complete Example](#complete-example)
+- [API Reference](#api-reference)
+- [State Management](#state-management)
+- [LLM Integration](#llm-integration)
+- [Error Handling](#error-handling)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Overview
 
 `workflow-function-manifold` enables you to create dynamic workflows that:
@@ -240,6 +253,46 @@ class CustomLLMService {
   }
 }
 ```
+
+#### **Error Handling**
+
+This library includes basic error handling to ensure workflows continue running smoothly, even when unexpected issues arise.
+
+#### **Navigation Errors**
+
+If a prompt doesn't match a valid adjacent region, the system will:
+- Log a warning: `No valid region found for prompt: "<prompt>"`
+- Continue without changing the current region.
+
+#### **Operator Execution Errors**
+
+If no matching operator is found for a prompt, or an operator encounters an error during execution:
+- Log a warning: `No matching operator found for intent: <intent>`
+- Log an error if execution fails: `Error during workflow execution for prompt "<prompt>": <error message>`
+
+#### **LLM Query Errors**
+
+In case of issues querying the LLM service:
+- Log an error: `Error during navigation for prompt "<prompt>": <error message>`
+
+#### **Example Error Logging**
+
+```javascript
+const manifold = new WorkflowFunctionManifold(new DummyLlmService());
+
+try {
+    await manifold.navigate('unknown command');
+} catch (error) {
+    console.error('Critical navigation error:', error);
+}
+
+try {
+    await manifold.executeWorkflow('perform unknown action');
+} catch (error) {
+    console.error('Critical execution error:', error);
+}
+```
+
 
 ## Contributing
 
