@@ -1,6 +1,6 @@
 {
   "name": "workflow-function-manifold",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "for building dynamic, LLM-driven workflows using a region-based execution model",
   "main": "index.js",
   "bin": {
