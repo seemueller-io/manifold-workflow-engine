@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "for building dynamic, LLM-driven workflows using a region-based execution model",
   "main": "index.js",
+  "bin": {
+    "workflow-function-manifold": "./bin.js"
+  },
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
