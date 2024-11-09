@@ -1,7 +1,7 @@
 # workflow-function-manifold
 
-> A TypeScript/JavaScript library for building dynamic, LLM-driven workflows using a region-based execution model
-
+> A TypeScript/JavaScript library for building dynamic, LLM-driven workflows
+> using a region-based execution model
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 ![Node Version](https://img.shields.io/badge/node-%3E%3D%2014.0.0-brightgreen)
@@ -9,6 +9,7 @@
 CLI: `npx workflow-function-manifold`
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -24,6 +25,7 @@ CLI: `npx workflow-function-manifold`
 ## Overview
 
 `workflow-function-manifold` enables you to create dynamic workflows that:
+
 - Navigate between different execution regions based on LLM-interpreted intents.
 - Execute operations within regions based on state and context.
 - Maintain workflow state across operations.
@@ -64,11 +66,11 @@ npm install workflow-function-manifold
 ## Quick Start
 
 ```javascript
-import { 
-  WorkflowFunctionManifold, 
-  ManifoldRegion, 
-  WorkflowOperator, 
-  DummyLlmService 
+import {
+  WorkflowFunctionManifold,
+  ManifoldRegion,
+  WorkflowOperator,
+  DummyLlmService,
 } from 'workflow-function-manifold';
 
 // Initialize the manifold with an LLM service
@@ -76,7 +78,7 @@ const llm = new DummyLlmService();
 const manifold = new WorkflowFunctionManifold(llm);
 
 // Create an operator
-const analysisOperator = new WorkflowOperator('analysis', async (state) => {
+const analysisOperator = new WorkflowOperator('analysis', async state => {
   console.log('Analyzing data...');
   return { ...state, analyzed: true };
 });
@@ -86,13 +88,15 @@ const analysisRegion = new ManifoldRegion('analysis', [analysisOperator]);
 manifold.addRegion(analysisRegion);
 
 // Execute workflow
-await manifold.navigate('analyze the data');  // This navigates to the 'analysis' region
-await manifold.executeWorkflow('analyze the data');  // Executes the operator in the 'analysis' region
+await manifold.navigate('analyze the data'); // This navigates to the 'analysis' region
+await manifold.executeWorkflow('analyze the data'); // Executes the operator in the 'analysis' region
 
-console.log(manifold.state);  // { analyzed: true }
+console.log(manifold.state); // { analyzed: true }
 ```
 
-> **Note:** The `DummyLlmService` matches specific keywords in prompts. Ensure your prompts contain keywords like `'analyze'`, `'process'`, or `'transform'` for the default operators to function.
+> **Note:** The `DummyLlmService` matches specific keywords in prompts. Ensure
+> your prompts contain keywords like `'analyze'`, `'process'`, or `'transform'`
+> for the default operators to function.
 
 ## Core Components
 
@@ -115,7 +119,8 @@ await manifold.executeWorkflow(prompt);
 
 ### ManifoldRegion
 
-Represents a workflow region containing operators and connections to other regions.
+Represents a workflow region containing operators and connections to other
+regions.
 
 ```javascript
 const region = new ManifoldRegion('regionName', [operator1, operator2]);
@@ -132,7 +137,7 @@ region.addOperator(newOperator);
 Defines operations that can be executed within regions.
 
 ```javascript
-const operator = new WorkflowOperator('operatorName', async (state) => {
+const operator = new WorkflowOperator('operatorName', async state => {
   // Modify state
   return newState;
 });
@@ -158,13 +163,13 @@ async function createWorkflow() {
   const manifold = new WorkflowFunctionManifold(llm);
 
   // Create operators
-  const analysisOp = new WorkflowOperator('analysis', async (state) => {
+  const analysisOp = new WorkflowOperator('analysis', async state => {
     return { ...state, analyzed: true };
   });
-  const processingOp = new WorkflowOperator('processing', async (state) => {
+  const processingOp = new WorkflowOperator('processing', async state => {
     return { ...state, processed: true };
   });
-  const transformOp = new WorkflowOperator('transformation', async (state) => {
+  const transformOp = new WorkflowOperator('transformation', async state => {
     return { ...state, transformed: true };
   });
 
@@ -189,7 +194,7 @@ const manifold = await createWorkflow();
 const prompts = [
   'analyze the data',
   'process the results',
-  'transform the output'
+  'transform the output',
 ];
 
 for (const prompt of prompts) {
@@ -197,7 +202,7 @@ for (const prompt of prompts) {
   await manifold.executeWorkflow(prompt);
 }
 
-console.log(manifold.state);  // Final state after all operations
+console.log(manifold.state); // Final state after all operations
 ```
 
 ## API Reference
@@ -205,9 +210,11 @@ console.log(manifold.state);  // Final state after all operations
 ### WorkflowFunctionManifold
 
 #### Constructor
+
 - `constructor(llmService: LLMService)`
 
 #### Methods
+
 - `addRegion(region: ManifoldRegion): void`
 - `async navigate(prompt: string): Promise<boolean>`
 - `async executeWorkflow(prompt: string): Promise<boolean>`
@@ -215,9 +222,11 @@ console.log(manifold.state);  // Final state after all operations
 ### ManifoldRegion
 
 #### Constructor
+
 - `constructor(name: string, operators: WorkflowOperator[] = [])`
 
 #### Methods
+
 - `addOperator(operator: WorkflowOperator): void`
 - `connectTo(region: ManifoldRegion): void`
 - `async getValidOperators(state: any): Promise<WorkflowOperator[]>`
@@ -225,24 +234,27 @@ console.log(manifold.state);  // Final state after all operations
 ### WorkflowOperator
 
 #### Constructor
+
 - `constructor(name: string, operation: (state: any) => Promise<any>)`
 
 #### Methods
+
 - `async execute(state: any): Promise<any>`
 
 ## State Management
 
-The workflow maintains state across operations. Each operator can access and modify the state:
+The workflow maintains state across operations. Each operator can access and
+modify the state:
 
 ```javascript
-const operator = new WorkflowOperator('example', async (state) => {
+const operator = new WorkflowOperator('example', async state => {
   // Access existing state
   const { previousValue } = state;
-  
+
   // Return modified state
   return {
     ...state,
-    newValue: 'updated'
+    newValue: 'updated',
   };
 });
 ```
@@ -251,7 +263,9 @@ The updated state persists across operators and regions.
 
 ## LLM Integration
 
-The system uses LLM services for intent recognition. The default `DummyLlmService` provides basic intent matching, but you can implement your own LLM service:
+The system uses LLM services for intent recognition. The default
+`DummyLlmService` provides basic intent matching, but you can implement your own
+LLM service:
 
 ```javascript
 class CustomLLMService {
@@ -259,7 +273,7 @@ class CustomLLMService {
     // Implement custom LLM logic
     return {
       confidence: number,
-      action: string
+      action: string,
     };
   }
 }
@@ -267,21 +281,27 @@ class CustomLLMService {
 
 ## Error Handling
 
-This library includes basic error handling to ensure workflows run smoothly, even when unexpected issues arise.
+This library includes basic error handling to ensure workflows run smoothly,
+even when unexpected issues arise.
 
 ### Navigation Errors
+
 - If a prompt doesn't match a valid adjacent region:
-    - Logs a warning: `No valid region found for prompt: "<prompt>"`.
+  - Logs a warning: `No valid region found for prompt: "<prompt>"`.
 
 ### Operator Execution Errors
+
 - If no matching operator is found:
-    - Logs a warning: `No matching operator found for intent: <intent>`.
+  - Logs a warning: `No matching operator found for intent: <intent>`.
 
 ### LLM Query Errors
+
 - If issues arise during LLM queries:
-    - Logs an error: `Error during navigation for prompt "<prompt>": <error message>`.
+  - Logs an error:
+    `Error during navigation for prompt "<prompt>": <error message>`.
 
 ### Example Error Logging
+
 ```javascript
 try {
   await manifold.navigate('unknown command');
