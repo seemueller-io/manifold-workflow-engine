@@ -2,8 +2,11 @@
 
 > A TypeScript/JavaScript library for building dynamic, LLM-driven workflows using a region-based execution model
 
+
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 ![Node Version](https://img.shields.io/badge/node-%3E%3D%2014.0.0-brightgreen)
+
+CLI: `npx workflow-function-manifold`
 
 ## Table of Contents
 - [Overview](#overview)
@@ -21,10 +24,10 @@
 ## Overview
 
 `workflow-function-manifold` enables you to create dynamic workflows that:
-- Navigate between different execution regions based on LLM-interpreted intents
-- Execute operations within regions based on state and context
-- Maintain workflow state across operations
-- Support flexible region-to-region connections
+- Navigate between different execution regions based on LLM-interpreted intents.
+- Execute operations within regions based on state and context.
+- Maintain workflow state across operations.
+- Support flexible region-to-region connections.
 
 ```mermaid
 graph TD
@@ -83,9 +86,13 @@ const analysisRegion = new ManifoldRegion('analysis', [analysisOperator]);
 manifold.addRegion(analysisRegion);
 
 // Execute workflow
-await manifold.navigate('analyze the data');
-await manifold.executeWorkflow('analyze the data');
+await manifold.navigate('analyze the data');  // This navigates to the 'analysis' region
+await manifold.executeWorkflow('analyze the data');  // Executes the operator in the 'analysis' region
+
+console.log(manifold.state);  // { analyzed: true }
 ```
+
+> **Note:** The `DummyLlmService` matches specific keywords in prompts. Ensure your prompts contain keywords like `'analyze'`, `'process'`, or `'transform'` for the default operators to function.
 
 ## Core Components
 
@@ -189,6 +196,8 @@ for (const prompt of prompts) {
   await manifold.navigate(prompt);
   await manifold.executeWorkflow(prompt);
 }
+
+console.log(manifold.state);  // Final state after all operations
 ```
 
 ## API Reference
@@ -238,6 +247,8 @@ const operator = new WorkflowOperator('example', async (state) => {
 });
 ```
 
+The updated state persists across operators and regions.
+
 ## LLM Integration
 
 The system uses LLM services for intent recognition. The default `DummyLlmService` provides basic intent matching, but you can implement your own LLM service:
@@ -254,53 +265,44 @@ class CustomLLMService {
 }
 ```
 
-#### **Error Handling**
+## Error Handling
 
-This library includes basic error handling to ensure workflows continue running smoothly, even when unexpected issues arise.
+This library includes basic error handling to ensure workflows run smoothly, even when unexpected issues arise.
 
-#### **Navigation Errors**
+### Navigation Errors
+- If a prompt doesn't match a valid adjacent region:
+    - Logs a warning: `No valid region found for prompt: "<prompt>"`.
 
-If a prompt doesn't match a valid adjacent region, the system will:
-- Log a warning: `No valid region found for prompt: "<prompt>"`
-- Continue without changing the current region.
+### Operator Execution Errors
+- If no matching operator is found:
+    - Logs a warning: `No matching operator found for intent: <intent>`.
 
-#### **Operator Execution Errors**
+### LLM Query Errors
+- If issues arise during LLM queries:
+    - Logs an error: `Error during navigation for prompt "<prompt>": <error message>`.
 
-If no matching operator is found for a prompt, or an operator encounters an error during execution:
-- Log a warning: `No matching operator found for intent: <intent>`
-- Log an error if execution fails: `Error during workflow execution for prompt "<prompt>": <error message>`
-
-#### **LLM Query Errors**
-
-In case of issues querying the LLM service:
-- Log an error: `Error during navigation for prompt "<prompt>": <error message>`
-
-#### **Example Error Logging**
-
+### Example Error Logging
 ```javascript
-const manifold = new WorkflowFunctionManifold(new DummyLlmService());
-
 try {
-    await manifold.navigate('unknown command');
+  await manifold.navigate('unknown command');
 } catch (error) {
-    console.error('Critical navigation error:', error);
+  console.error('Critical navigation error:', error);
 }
 
 try {
-    await manifold.executeWorkflow('perform unknown action');
+  await manifold.executeWorkflow('perform unknown action');
 } catch (error) {
-    console.error('Critical execution error:', error);
+  console.error('Critical execution error:', error);
 }
 ```
 
-
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -am 'Add new feature'`
-4. Push to the branch: `git push origin feature/my-feature`
-5. Submit a pull request
+1. Fork the repository.
+2. Create your feature branch: `git checkout -b feature/my-feature`.
+3. Commit your changes: `git commit -am 'Add new feature'`.
+4. Push to the branch: `git push origin feature/my-feature`.
+5. Submit a pull request.
 
 ## License
 
